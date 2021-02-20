@@ -8,13 +8,13 @@ const Ship = (pos) => {
     );
   };
 
-  const isSunk = () => {
+  const isSunken = () => {
     return position.hitPosition.length === position.length;
   };
 
   return {
     hit,
-    isSunk,
+    isSunken,
     position,
   };
 };
@@ -47,7 +47,7 @@ const Gameboard = (sh) => {
         for (let j = 0; j < ships[i].position.length; j++) {
           if (shipPoint + j === posPoint) {
             ships[i].hit(pos);
-            if (ships[i].isSunk()) {
+            if (ships[i].isSunken()) {
               sunkenShips.push(i);
             }
             return true;
@@ -60,19 +60,53 @@ const Gameboard = (sh) => {
     return false;
   };
 
-  const isAllSunk = () => {
+  const isAllSunken = () => {
     return ships.length === sunkenShips.length;
   };
 
   return {
     missedAttacks,
     receiveAttack,
-    isAllSunk,
+    isAllSunken,
   };
 };
 
-const Player = () => {
-  return {};
+const Player = (enemyGameboard) => {
+  const play = (pos) => {
+    enemyGameboard.receiveAttack(pos);
+  };
+
+  return { play };
 };
 
-export { Ship, Gameboard, Player };
+const Computer = (enemyGameboard) => {
+  const movedPosition = [];
+  const play = () => {
+    let isPresent = true;
+    let newPos;
+    while (isPresent) {
+      let count = 0;
+      newPos = {
+        x: Math.floor(Math.random() * (9 - 0 + 1)) + 0,
+        y: Math.floor(Math.random() * (9 - 0 + 1)) + 0,
+      };
+      for (let i = 0; i < movedPosition.length; i++) {
+        if (
+          movedPosition[i].x === newPos.x &&
+          movedPosition[i].y === newPos.y
+        ) {
+          break;
+        }
+        count += 1;
+      }
+      if (count === movedPosition.length) isPresent = false;
+    }
+
+    movedPosition.push(newPos);
+    enemyGameboard.receiveAttack(newPos);
+  };
+
+  return { play, movedPosition };
+};
+
+export { Ship, Gameboard, Player, Computer };
