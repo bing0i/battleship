@@ -11,7 +11,6 @@
 }
 
 .square {
-  position: relative;
   border: 1px solid black;
   box-sizing: border-box;
 }
@@ -20,12 +19,4 @@
   content: '';
   display: block;
   padding-bottom: 100%;
-}
-
-.square .content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
 }
