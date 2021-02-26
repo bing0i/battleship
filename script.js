@@ -4,6 +4,7 @@ import { Player } from './scripts/Player.js';
 import { Computer } from './scripts/Computer.js';
 import { UserInterface } from './scripts/UserInterface.js';
 
+const gameboards = Array.from(document.querySelectorAll('.gameboard'));
 const gameboardsInfo = [
   Gameboard([
     Ship({
@@ -66,3 +67,5 @@ const userInterface = UserInterface(gameboardsInfo);
 userInterface.createGameboards();
 userInterface.placeShips();
 userInterface.clickToAttack();
+
+gameboards[1].classList.add('disabled');

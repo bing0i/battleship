@@ -8,6 +8,7 @@
 .gameboard {
   display: grid;
   grid-template-columns: repeat(10, minmax(30px, 50px));
+  cursor: pointer;
 }
 
 .square {
@@ -19,4 +20,12 @@
   content: '';
   display: block;
   padding-bottom: 100%;
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.disabled:active {
+  pointer-events: none;
 }

@@ -18,18 +18,24 @@ const UserInterface = (gbsInfo) => {
   };
 
   const clickToAttack = () => {
-    for (let i = 0; i < gameboards.length; i++) {
-      let squares = Array.from(gameboards[i].querySelectorAll('.square'));
-      for (let j = 0; j < squares.length; j++) {
-        squares[j].addEventListener('click', (e) => {
-          const splittedStrings = e.target.className.split('-');
-          const pos = {
-            x: parseInt(splittedStrings[1]) - 1,
-            y: parseInt(splittedStrings[2]) - 1,
-          };
-          attack(e.target, gameboardsInfo[i], pos);
-        });
-      }
+    const squares = Array.from(document.querySelectorAll('.square'));
+    for (let j = 0; j < squares.length; j++) {
+      squares[j].addEventListener('click', (e) => {
+        const splittedStrings = e.target.className.split('-');
+        const pos = {
+          x: parseInt(splittedStrings[1]) - 1,
+          y: parseInt(splittedStrings[2]) - 1,
+        };
+        const gameboard = e.target.parentNode;
+        gameboard.className.split(' ')[1] === 'player-gb'
+          ? attack(e.target, gameboardsInfo[0], pos)
+          : attack(e.target, gameboardsInfo[1], pos);
+        gameboard.classList.add('disabled');
+        const nextGameboard = gameboard.nextElementSibling
+          ? gameboard.nextElementSibling
+          : gameboard.previousElementSibling;
+        nextGameboard.classList.remove('disabled');
+      });
     }
   };
 
