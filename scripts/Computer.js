@@ -1,6 +1,8 @@
 const Computer = (enemyGameboard) => {
   const movedPosition = [];
   const play = () => {
+    if (movedPosition.length === 10 * 10) return null;
+
     let isPresent = true;
     let newPos;
     while (isPresent) {
@@ -22,7 +24,8 @@ const Computer = (enemyGameboard) => {
     }
 
     movedPosition.push(newPos);
-    enemyGameboard.receiveAttack(newPos);
+    let isHit = enemyGameboard.receiveAttack(newPos);
+    return { isHit, newPos };
   };
 
   return { play, movedPosition };

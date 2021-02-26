@@ -1,16 +1,14 @@
-const UserInterface = (gbsInfo) => {
+const UserInterface = (gbsInfo, pls) => {
   const gameboardsInfo = gbsInfo;
+  const players = pls;
   const gameboards = Array.from(document.querySelectorAll('.gameboard'));
 
   const createGameboards = () => {
-    for (let i = 1; i <= 10; i++) {
-      for (let j = 1; j <= 10; j++) {
+    for (let i = 0; i <= 9; i++) {
+      for (let j = 0; j <= 9; j++) {
         for (let k = 0; k < gameboards.length; k++) {
           let square = document.createElement('div');
           square.className = `square position-${j}-${i}`;
-          square.addEventListener('click', () => {
-            attack(square, gameboardsInfo[k], { j, i });
-          });
           gameboards[k].appendChild(square);
         }
       }
@@ -18,23 +16,30 @@ const UserInterface = (gbsInfo) => {
   };
 
   const clickToAttack = () => {
-    const squares = Array.from(document.querySelectorAll('.square'));
-    for (let j = 0; j < squares.length; j++) {
-      squares[j].addEventListener('click', (e) => {
+    const squares = Array.from(gameboards[1].querySelectorAll('.square'));
+    for (let i = 0; i < squares.length; i++) {
+      squares[i].addEventListener('click', (e) => {
         const splittedStrings = e.target.className.split('-');
         const pos = {
-          x: parseInt(splittedStrings[1]) - 1,
-          y: parseInt(splittedStrings[2]) - 1,
+          x: parseInt(splittedStrings[1]),
+          y: parseInt(splittedStrings[2]),
         };
-        const gameboard = e.target.parentNode;
-        gameboard.className.split(' ')[1] === 'player-gb'
-          ? attack(e.target, gameboardsInfo[0], pos)
-          : attack(e.target, gameboardsInfo[1], pos);
-        gameboard.classList.add('disabled');
-        const nextGameboard = gameboard.nextElementSibling
-          ? gameboard.nextElementSibling
-          : gameboard.previousElementSibling;
-        nextGameboard.classList.remove('disabled');
+        attack(e.target, gameboardsInfo[1].receiveAttack(pos));
+
+        const { isHit, newPos } = players[1].play();
+        if (newPos) {
+          const attackedSquare = gameboards[0].querySelector(
+            `.position-${newPos.x}-${newPos.y}`
+          );
+          attack(attackedSquare, isHit);
+        }
+
+        if (
+          gameboardsInfo[0].isAllSunken() ||
+          gameboardsInfo[1].isAllSunken()
+        ) {
+          gameboards[1].classList.add('disabled');
+        }
       });
     }
   };
@@ -53,21 +58,17 @@ const UserInterface = (gbsInfo) => {
             x = position.start.x;
             y = position.start.y + k;
           }
-          let square = gameboards[i].querySelector(
-            `.position-${x + 1}-${y + 1}`
-          );
+          let square = gameboards[i].querySelector(`.position-${x}-${y}`);
           square.style.backgroundColor = 'red';
         }
       }
     }
   };
 
-  const attack = (square, gameboardInfo, pos) => {
-    if (gameboardInfo.receiveAttack(pos)) {
-      square.style.backgroundColor = 'blue';
-    } else {
-      square.style.backgroundColor = 'orange';
-    }
+  const attack = (square, isHit) => {
+    isHit
+      ? (square.style.backgroundColor = 'blue')
+      : (square.style.backgroundColor = 'orange');
   };
 
   return {
